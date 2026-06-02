@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>體育科筆試 - 50題核心考點終極大滿貫操練系統</title>
+    <style>
+        :root {
+            --primary: #2b5c8f;
+            --secondary: #eef4fa;
+            --success: #2e7d32;
+            --error: #c62828;
+            --text: #333333;
+            --bg: #fafafa;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .quiz-box { display: none; }
+        .quiz-box.active { display: block; }
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #111;
+        }
+        .hint-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+        .hint-text {
+            display: none;
+            background: #fff9c4;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border-left: 4px solid #fbc02d;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            background: #fff;
+            text-align: left;
+        }
+        .option:hover {
+            border-color: var(--primary);
+            background: var(--secondary);
+        }
+        .option.correct {
+            background-color: #e8f5e9;
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: bold;
+        }
+        .option.incorrect {
+            background-color: #ffebee;
+            border-color: var(--error);
+            color: var(--error);
+        }
+        .feedback {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f5f5f5;
+            border-left: 4px solid #9e9e9e;
+        }
+        .feedback.show { display: block; }
+        .nav-btn {
+            display: none;
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #1e436d; }
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+        .result-screen h2 { color: var(--success); }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔥 體育科筆試：50題終極全覆蓋操練系統</h1>
+    <div class="subtitle">（涵蓋所有粗體、下劃線、框框重點，支援選項隨機洗牌）</div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div id="quiz-container">
+        </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>🎉 挑戰完成！</h2>
+        <p>你明天筆試的熟練度為：</p>
+        <div class="score-display" id="score-display">0 / 50</div>
+        <p id="comment"></p>
+        <button class="nav-btn" style="display:inline-block;" onclick="location.reload()">再戰一次（重新隨機洗牌） 🔄</button>
+    </div>
+</div>
+
+<script>
+const rawQuestions = [
+    {
+      "question": "★ 根據小冊子定義，運動猝死（Sudden death）的時間界定是指運動中和運動後多久之內發生的死亡事件？",
+      "hint": "請回想小冊子開篇用粗體寫下的標準時間限制，它是以「一個」特定時間單位來計算的。",
+      "options": [
+        {"text": "一個小時內", "rationale": "小冊子第1頁粗體字明確指出：凡是運動中和運動後一個小時內發生的死亡事件，都稱為運動猝死。", "isCorrect": true},
+        {"text": "半個小時內", "rationale": "時間過短，不符合原文的「一個小時內」定義。", "isCorrect": false},
+        {"text": "二十四小時內", "rationale": "醫學上有其他定義，但本小冊子粗體指定的標準是一個小時內。", "isCorrect": false},
+        {"text": "十二小時內", "rationale": "這不是小冊子文本中所界定的精確時間窗口。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 運動猝死在民間或坊間通常被俗稱為什麼？",
+      "hint": "這個俗稱聽起來非常突然且帶有驚悚感，常用來形容突然的死亡。",
+      "options": [
+        {"text": "運動暴斃", "rationale": "小冊子第1頁原文指出：運動猝死俗稱運動暴斃。", "isCorrect": true},
+        {"text": "運動過勞", "rationale": "過勞不一定導致即時死亡，俗稱應為暴斃。", "isCorrect": false},
+        {"text": "心室顫動", "rationale": "這是醫學上的病理機制名詞，而非坊間俗稱。", "isCorrect": false},
+        {"text": "運動休克", "rationale": "休克不等於死亡，與「猝死」的俗稱不符。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 國際奧會醫療委員會之專家小組引述數據指出，非創傷猝死的運動員中，超過百分之幾與已存在的心臟病變有關？",
+      "hint": "這是一個非常巨大的整十數百分比，凸顯了心臟篩查的重要性。",
+      "options": [
+        {"text": "百分之90", "rationale": "小冊子第1頁粗體明確寫道：超過百分之90的運動員非創傷猝死與已存在之心臟病變有關。", "isCorrect": true},
+        {"text": "百分之50", "rationale": "數據過低，實際比例極高，說明潛在心臟問題是主因。", "isCorrect": false},
+        {"text": "百分之70", "rationale": "這不是小冊子中引用的權威專家組精確百分比。", "isCorrect": false},
+        {"text": "百分之99", "rationale": "雖然很高，但小冊子記錄的精確字眼是「超過百分之90」。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 在防範運動猝死的所有措施中，哪一項被粗體加底線特別強調為「第一道防線」？",
+      "hint": "這強調了運動者必須對自己身體發出的信號和異狀有極高的警覺性。",
+      "options": [
+        {"text": "自己的覺醒", "rationale": "小冊子原文以粗體加底線鄭重強調：「自己的覺醒」是防範運動猝死的第一道防線。", "isCorrect": true},
+        {"text": "醫生的診斷", "rationale": "醫生診斷重要，但小冊子局限最首要、最基礎的是個人的自覺。", "isCorrect": false},
+        {"text": "校方的體檢", "rationale": "校方體檢屬於外部制度，並非小冊子界定的第一道防線。", "isCorrect": false},
+        {"text": "急救員的跟場", "rationale": "這是事後或病發時的保障，非預防的第一道防線。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 當出現心臟腹心症狀時，小冊子指出應採取什麼最正確的態度？",
+      "hint": "面對可能致命的心臟信號，絕對不能掉以輕心或自我安慰。",
+      "options": [
+        {"text": "不應抱開脫或僥倖的心理，應盡快找醫生檢查", "rationale": "小冊子原文指出：不應抱開脫或僥倖的心理，如果出現以下四大腹心症狀，應盡快找醫生檢查。", "isCorrect": true},
+        {"text": "可以先休息幾天，若症狀持續一週以上才去就醫", "rationale": "這樣做容易錯過黃金診斷期，不符合小冊子提倡的即時警惕態度。", "isCorrect": false},
+        {"text": "繼續加大運動量以鍛鍊心臟，嘗試適應這種不適感", "rationale": "這會極大地增加運動猝死的風險，是非常危險的謬誤。", "isCorrect": false},
+        {"text": "自行到藥房購買止痛藥或擴張血管藥物服用即可", "rationale": "小冊子強調應找醫生進行專業檢查，而非自行服藥。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子用框框圈出的「心臟四大腹心症狀」中，最直接影響呼吸狀態的是哪一個？",
+      "hint": "當心臟泵血功能不足時，肺部氣體交換受阻，會感到呼吸非常困難和急促。",
+      "options": [
+        {"text": "氣促", "rationale": "氣促、昏厥、心悸、胸痛是四大症狀，其中氣促直接表現為呼吸急促、困難。", "isCorrect": true},
+        {"text": "咳嗽", "rationale": "咳嗽不屬於小冊子用框框圈出的心臟四大腹心症狀。", "isCorrect": false},
+        {"text": "哮喘", "rationale": "哮喘是具體的呼吸道疾病名稱，非框框內圈出的症狀專有名詞。", "isCorrect": false},
+        {"text": "吐血", "rationale": "這不是小冊子中列出的四大核心症狀之一。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子用框框圈出的「心臟四大腹心症狀」中，涉及大腦短暫缺血而失去知覺的是哪一個？",
+      "hint": "這是指身體突然軟倒、雙眼發黑、短暫失去意識的現象。",
+      "options": [
+        {"text": "昏厥", "rationale": "昏厥是四大腹心症狀之一，指突然失去意識倒地。", "isCorrect": true},
+        {"text": "眩暈", "rationale": "眩暈只是感到天旋地轉，並未失去知覺，框框中的專有名詞是「昏厥」。", "isCorrect": false},
+        {"text": "中風", "rationale": "中風是腦血管疾病，非框框中列出的心臟四大症狀名稱。", "isCorrect": false},
+        {"text": "抽搐", "rationale": "抽搐指肌肉痙攣，非失去知覺的昏厥。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子用框框圈出的「心臟四大腹心症狀」中，感覺到心跳劇烈、不規則或心慌的是哪一個？",
+      "hint": "這個詞在中文裡常用來形容心臟撲通撲通狂跳、讓人感到不安的生理主觀感受。",
+      "options": [
+        {"text": "心悸", "rationale": "心悸是指患者自覺心跳或心慌，是框框內明確列出的四大症狀之一。", "isCorrect": true},
+        {"text": "心肌梗塞", "rationale": "這是具體的疾病診斷名稱，而非患者主觀感受的症狀名詞。", "isCorrect": false},
+        {"text": "心跳停止", "rationale": "心跳停止時人已失去意識，不屬於自覺症狀的「心悸」。", "isCorrect": false},
+        {"text": "高血壓", "rationale": "高血壓是臨床指標，不屬於四大主觀腹心症狀。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子用框框圈出的「心臟四大腹心症狀」中，最常表現為胸口壓迫感或絞痛的是哪一個？",
+      "hint": "這是位於胸腔正前方、靠近心臟部位的直接疼痛或壓榨感。",
+      "options": [
+        {"text": "胸痛", "rationale": "胸痛是四大腹心症狀之一，通常提示心肌可能缺血缺氧。", "isCorrect": true},
+        {"text": "肋骨痛", "rationale": "肋骨痛通常是骨骼肌肉損傷，與心臟四大腹心症狀的「胸痛」性質不同。", "isCorrect": false},
+        {"text": "胃痛", "rationale": "雖然有時心案會引起上腹不適，但框框內的標準專有名詞是「胸痛」。", "isCorrect": false},
+        {"text": "背痛", "rationale": "非小冊子框框中指定列出的四大核心字眼。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 萬一不幸發生運動猝死事件，病發後的幾分鐘內被明確指定為搶救的「黃金時間」？",
+      "hint": "請記住急救學上的常識，腦細胞缺氧超過這個分鐘數就會開始發生不可逆的損傷。",
+      "options": [
+        {"text": "4分鐘", "rationale": "小冊子第4頁以粗體標註：病發後的4分鐘內是搶救的黃金時間。", "isCorrect": true},
+        {"text": "5分鐘", "rationale": "雖然接近，但小冊子中明確寫下的精確數字是「4分鐘」。", "isCorrect": false},
+        {"text": "8分鐘", "rationale": "8分鐘時大腦缺氧時間過長，已嚴重超過黃金救援窗口。", "isCorrect": false},
+        {"text": "10分鐘", "rationale": "此時生還率已極低，不符合黃金時間的定義。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 根據小冊子，如果在黃金4分鐘內及時採取甚麼措施，事主的生還率可高達百分之90？",
+      "hint": "這涉及到現代公共場所普及的一種現代傻瓜電擊設備，以及人工按壓的簡稱。",
+      "options": [
+        {"text": "使用自動體外心臟去顫器（AED）配合心肺復甦術（CPR）", "rationale": "小冊子在急救篇章中強調，AED與CPR的黃金4分鐘結合能大幅提升生存率至90%。", "isCorrect": true},
+        {"text": "立刻給事主餵服高濃度的強心藥物", "rationale": "事主昏迷時絕對不能餵食任何東西，這會導致窒息，是錯誤做法。", "isCorrect": false},
+        {"text": "將事主雙腿抬高並用冷水澆頭", "rationale": "這對心跳驟停無效，必須進行心肺復甦和去顫。", "isCorrect": false},
+        {"text": "不作任何處理，靜靜等待急救車和專業醫生到場", "rationale": "原地等待會完全錯過4分鐘的黃金時間，導致事主腦死亡。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子在社會文化因素篇章中，給出「社化」（社會化）的粗體定義是什麼？",
+      "hint": "社化強調的是個人與群體的「互動交往」，在其中找到「地位」並學會「合規範行為」。",
+      "options": [
+        {"text": "人們透過互相交往，從而建立在群體中地位，並培養合規範行為的過程", "rationale": "這是小冊子第7頁給出的「社化」標準粗體定義，屬於社會學的核心概念。", "isCorrect": true},
+        {"text": "學校將體育課改成集體遊戲以促進學生感情的教學體制", "rationale": "這只是具體的教學活動，非社化的宏觀社會學定義。", "isCorrect": false},
+        {"text": "政府撥款資助民間體育會以擴大體育設施社會福利的過程", "rationale": "這是體育福利化或公共政策，與社化定義不符。", "isCorrect": false},
+        {"text": "體育比賽通過電視直播讓全社會共同觀看的普及化現象", "rationale": "這是媒體傳播與盛事化，非個體的社會化過程。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "根據小冊子分析，家庭、學校、同輩和媒體在個人的體育活動參與中扮演了什麼角色？",
+      "hint": "這些群體或工具是傳播社會文化、影響我們體育習慣的媒介。",
+      "options": [
+        {"text": "社化媒介", "rationale": "社會學中，家庭、學校、同輩、傳媒等被稱為引導個體社會化的「社化媒介」。", "isCorrect": true},
+        {"text": "商業贊助商", "rationale": "家庭和學校通常不屬於商業贊助商的範疇。", "isCorrect": false},
+        {"text": "行政審查機關", "rationale": "這些群體主要產生文化和心理影響，而非官方行政審查。", "isCorrect": false},
+        {"text": "反對體育組織", "rationale": "它們往往能促進或引導個體參與體育，而非一味反對。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 1971年4月發生的「乒乓外交」，其最核心的重大政治歷史歷史意義是什麼？",
+      "hint": "想想看冷戰時期，這場體育交往打破了哪兩個東、西方大國之間長期的封鎖與隔絕。",
+      "options": [
+        {"text": "結束了中美兩國20多年人員交往隔絕的局面，開啟了兩國關係正常化的破冰之旅", "rationale": "小冊子第9頁粗體強調，這場互訪打破了中美20多年的隔絕，史稱乒乓外交。", "isCorrect": true},
+        {"text": "讓中國乒乓球隊獲得了歷史上第一枚奧運會金牌", "rationale": "1988年才是乒乓球正式入奧年份，且這場活動的焦點是外交而非奪金。", "isCorrect": false},
+        {"text": "促成了聯合國將乒乓球定為「世界第一和平運動」", "rationale": "聯合國並未做過此項規定，此選項為虛構。", "isCorrect": false},
+        {"text": "幫助美國乒乓球隊全體成員獲得了中國永久居留權", "rationale": "這完全不符合歷史事實，外交活動是友好互訪而非集體移民。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 哪兩個國家的乒乓球隊互訪，促成了體育史上最著名的「乒乓外交」？",
+      "hint": "這兩個國家一個位於亞洲、一個位於北美洲，是當年冷戰時期的兩大主要陣營代表。",
+      "options": [
+        {"text": "中國與美國", "rationale": "小冊子指明是1971年4月美國乒乓球隊受邀訪問中國，促成中美外交突破。", "isCorrect": true},
+        {"text": "中國與日本", "rationale": "雖然日本在其中有協助聯絡，但外交的主角和破冰雙方是中美。", "isCorrect": false},
+        {"text": "美國與蘇聯", "rationale": "美蘇冷戰有其他外交事件，但「乒乓外交」專指中美事件。", "isCorrect": false},
+        {"text": "英國與中國", "rationale": "不符合小冊子記載的1971年特定歷史事實。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於「間歇運動」，小冊子在標題旁以粗體給出的本質定義是什麼？",
+      "hint": "它並不是指某個特定的「動作」，而是指一種安排運動時間與強度的「體系或方案」。",
+      "options": [
+        {"text": "運動的訓練模式", "rationale": "小冊子第12頁明確用粗體標註：間歇運動在本質上是一種「運動的訓練模式」。", "isCorrect": true},
+        {"text": "單一的拉筋伸展動作", "rationale": "間歇運動是一套結構化的訓練模式，包含了高低強度的交替，非單一動作。", "isCorrect": false},
+        {"text": "純粹的休閒娛樂遊戲", "rationale": "它具有高度的科學訓練性與體能挑戰性，歸類為訓練模式。", "isCorrect": false},
+        {"text": "體育課的考勤制度", "rationale": "這與考勤或行政制度毫無關係。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "間歇運動（Interval Training）最核心的特徵是在兩次高強度練習之間穿插什麼？",
+      "hint": "關鍵字在於恢復的程度是「完全」還是「不完全」，以及中間時間的長短。",
+      "options": [
+        {"text": "不完全恢復的低強度活動或短暫休息", "rationale": "小冊子指出，間歇運動的精髓就在於不讓身體完全恢復，在半疲勞狀態下穿插低強度活動再繼續。", "isCorrect": true},
+        {"text": "直到心率完全恢復到靜止狀態的長期睡眠", "rationale": "完全恢復就失去了「間歇訓練」對心肺耐力極限的刺激效果。", "isCorrect": false},
+        {"text": "補充高脂肪食物的大餐時間", "rationale": "這會導致嚴重的消化問題，破壞訓練。", "isCorrect": false},
+        {"text": "完全靜止不動且不得呼吸的極限屏氣", "rationale": "這是極度危險且錯誤的做法。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "小冊子常識篇中，有些人停止定期運動後身體開始發胖，主要原因是飲食習慣未變，但什麼減少了？",
+      "hint": "運動能幫我們燒掉卡路里，不運動了，這些卡路里的「去路」就斷了。",
+      "options": [
+        {"text": "熱量的消耗", "rationale": "小冊子指出，停止運動後熱量消耗大量減少，若維持原本的飲食量，剩餘熱量便轉化為脂肪。", "isCorrect": true},
+        {"text": "熱量的攝入", "rationale": "如果攝入變少就不容易發胖，正是因為攝入沒變而消耗變少才發胖。", "isCorrect": false},
+        {"text": "細胞的數量", "rationale": "發胖是脂肪細胞體積增大，與細胞總數量的減少無關。", "isCorrect": false},
+        {"text": "身體的水分", "rationale": "水分減少會導致體重減輕，發胖主要是脂肪積聚。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 針對停止運動後發胖的問題，小冊子在常識篇給出的最終結論是：做運動還是不做運動較好？",
+      "hint": "這是一道送分題，體育小冊子的核心宗旨永遠是鼓勵大眾積極參與什麼。",
+      "options": [
+        {"text": "做運動較好", "rationale": "小冊子明確得出結論：做運動較好，因為運動能帶來全面的身心健康，不能因為停止會發胖就因噎廢食。", "isCorrect": true},
+        {"text": "不做運動較好，因為一旦停止就會發胖", "rationale": "這是因噎廢食的錯誤觀點，小冊子對此予以否定。", "isCorrect": false},
+        {"text": "視乎體型，只有天生肥胖的人才需要做運動", "rationale": "運動對所有體型的人都有好處，非肥胖者專利。", "isCorrect": false},
+        {"text": "做運動與不做運動完全沒有任何分別", "rationale": "兩者對身體健康、基礎代謝的影響有巨大差異。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 根據小冊子常識篇，為甚麼飯後不宜作劇烈運動？主要生理原因是什麼？",
+      "hint": "這涉及到全身「血液」的爭奪戰，胃腸道消化需要它，肌肉跑步也需要它。",
+      "options": [
+        {"text": "飯後血液需集中於消化器官，立即運動會使血液流向骨骼肌，胃腸蠕動減弱，引起消化不良", "rationale": "小冊子清楚解釋了飯後血液重新分配的機制，立即運動會嚴重損害消化功能。", "isCorrect": true},
+        {"text": "因為胃裡的食物會在外力震盪下直接進入肺部導致窒息", "rationale": "食道和氣道是分開的，正常情況下食物不會因為跑步直接進入肺部。", "isCorrect": false},
+        {"text": "因為飯後骨骼會變軟，運動容易造成嚴重的關節粉碎性骨折", "rationale": "飲食不會在飯後立刻改變骨骼的硬度，此選項完全不科學。", "isCorrect": false},
+        {"text": "因為運動會讓食物中的毒素加速擴散到全身大腦細胞", "rationale": "正常食物不含毒素，運動也不會擴散毒素。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 飯後如果立即進行劇烈運動，小冊子指出最容易引發身體哪種即時的主觀不適症狀？",
+      "hint": "這個疼痛部位位於腹部，直接與受影響的消化器官（胃）相關。",
+      "options": [
+        {"text": "胃痛（或消化不良）", "rationale": "小冊子常識篇第(2)點明確指出，飯後立即劇烈運動會引起消化不良或胃痛。", "isCorrect": true},
+        {"text": "偏頭痛", "rationale": "偏頭痛與飯後運動無直接的因果生理機制。", "isCorrect": false},
+        {"text": "腳底抽筋", "rationale": "腳底抽筋通常與缺鈣、受涼或局部過度疲勞有關，非飯後運動的主因。", "isCorrect": false},
+        {"text": "耳朵發炎", "rationale": "這屬於細菌感染或耳道疾病，與飯後運動無關。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 為什麼女性進行重量訓練後，通常不會像男性那樣練出非常碩大發達的肌肉塊？",
+      "hint": "這是一個關鍵的內分泌學專有名詞，男女體內都有，但男性的分泌量是女性的許多倍。",
+      "options": [
+        {"text": "開展因為女性體內的雄性激素（睾丸酮）水平遠低於男性", "rationale": "小冊子第3點指出，肌肉的生長肥大高度依賴雄性激素，女性體內分泌量極少，因此不易練出發達肌肉。", "isCorrect": true},
+        {"text": "因為女性的肌肉纖維是由完全不同、無法膨脹的特殊蛋白質組成的", "rationale": "男女的肌肉微觀結構本質相同，差異在於激素調控。", "isCorrect": false},
+        {"text": "因為女性在重訓時無法承受超過5公斤的重量負荷", "rationale": "許多女性舉重運動員能承受極高負荷，這非主要生理決定因素。", "isCorrect": false},
+        {"text": "因為女性的皮下脂肪層會自動將所有練出的肌肉完全溶解掉", "rationale": "脂肪和肌肉是平行存在的組織，脂肪絕對不會溶解肌肉。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 根據小冊子常識篇，女性進行適度的重量訓練，能夠為身體帶來什麼主要好處？",
+      "hint": "它不會讓女性變成「金剛芭比」，反而會對「線條」、「彈性」和整體「健美」有正面作用。",
+      "options": [
+        {"text": "能使身材更修長、更有彈性，展現女性的健美體態", "rationale": "小冊子指出，重訓不會讓女性變粗壯，反而能修飾線條，讓身材更健美、有彈性。", "isCorrect": true},
+        {"text": "能讓聲音變得像男性一樣低沉雄渾", "rationale": "適度重訓不影響聲帶發育，除非非法注射外源性雄性激素。", "isCorrect": false},
+        {"text": "能讓身高在成年後再次暴長10公分以上", "rationale": "成年後骨骺線已閉合，重訓無法讓人再次長高。", "isCorrect": false},
+        {"text": "能讓大腦細胞數量翻倍，變得更加聰明", "rationale": "重訓對神經有益，但不會讓大腦細胞數量翻倍。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 為了在運動後迅速「恢復體力，消除疲勞」，小冊子推薦的綜合科學方法不包括下列哪一項？",
+      "hint": "想想看運動後身體已經大量失水，如果再去一個會讓人瘋狂出汗的極熱地方，會發生什麼。",
+      "options": [
+        {"text": "立刻到桑拿房進行兩小時以上的超高溫乾蒸", "rationale": "小冊子推薦的方法是：充足睡眠、整理運動（伸展拉筋）、水分和均衡營養補給。運動後立刻超高溫乾蒸會加劇脫水，非常危險。", "isCorrect": true},
+        {"text": "保證充足的睡眠與休息", "rationale": "這是小冊子第4點提到的核心疲勞恢復手段。", "isCorrect": false},
+        {"text": "進行適當的伸展拉筋等整理運動", "rationale": "整理運動能幫助血液回流，緩解肌肉僵硬，是文中推薦的做法。", "isCorrect": false},
+        {"text": "及時補充水分與均衡的營養", "rationale": "補充消耗的能量和液體是恢復體力的科學基礎。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "小冊子常識篇第(5)點探討「為什麼游泳比其他運動佳」，其提及的最核心生理優勢是什麼？",
+      "hint": "在陸地上跑步時雙腳要承受體重的數倍衝擊，但在水裡時，有一種「向上的力量」幫你托住了身體。",
+      "options": [
+        {"text": "水有浮力，能大大減輕關節（特別是膝關節和脊椎）的負重與衝擊力", "rationale": "游泳作為水上運動，利用浮力減少了陸地運動帶來的關節重力磨損，極適合復康與各年齡層。", "isCorrect": true},
+        {"text": "在水裡運動能讓人天生學會用皮膚直接呼吸氧氣", "rationale": "人類沒有鰓，在水裡依然必須靠口鼻浮出水面呼吸空氣。", "isCorrect": false},
+        {"text": "游泳能讓體溫永久保持在攝氏20度，永遠不會發燒", "rationale": "這是不符合人體恆溫動物生理學的荒謬選項。", "isCorrect": false},
+        {"text": "游泳是世界上唯一一種不需要消耗任何卡路里的運動", "rationale": "游泳需要克服水的阻力，消耗的卡路里其實非常高。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "小冊子指出「穿膠衣進行運動去增加出汗」來減肥，其排出的主要到底是什麼？喝水後會怎樣？",
+      "hint": "汗水的化學成分百分之99以上都是什麼？失去它之後只要一端起杯子補充，體重就回來了。",
+      "options": [
+        {"text": "排出的只是身體的水分，喝水後體重會立刻回復，無法真正減去脂肪", "rationale": "小冊子常識篇第6點明確反對這種做法，指出出汗減重只是暫時脫水，且阻礙散熱極易中暑。", "isCorrect": true},
+        {"text": "排出的全都是液態化的純脂肪，喝水後脂肪也不會回來", "rationale": "汗腺只能排出水分和少許無機鹽，絕對不可能直接排出固體或液體脂肪。", "isCorrect": false},
+        {"text": "排出的是體內的骨質，喝水後會加速骨骼生長", "rationale": "排汗不排出骨質，此說法完全不合生理常識。", "isCorrect": false},
+        {"text": "穿膠衣能將汗水在體表直接轉化為肌肉，喝水能鞏固肌肉結構", "rationale": "汗水和肌肉是截然不同的物質，無法互相轉化。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "穿膠衣運動去強行增加出汗，在臨床或運動安全上會帶來什麼重大危險？",
+      "hint": "人體排汗是為了「散熱」，如果用一件密不透風的塑料衣服把全身裹死，熱量散不出去，身體會變得如何。",
+      "options": [
+        {"text": "阻礙汗水蒸發散熱，極易導致體溫過高、中暑、嚴重脫水甚至休克", "rationale": "小冊子指出，膠衣不透氣，身體無法靠汗水蒸發來帶走熱量，會引發嚴重的熱疾病。", "isCorrect": true},
+        {"text": "會導致皮膚天生退化，變成魚鱗狀的組織", "rationale": "這是不合常理的虛構危險，並非主因。", "isCorrect": false},
+        {"text": "會導致肺部停止工作，讓人當場忘記如何呼吸", "rationale": "穿膠衣影響的是散熱和水鹽平衡，不直接關閉呼吸中樞。", "isCorrect": false},
+        {"text": "會讓身體產生強烈的放射性核輻射", "rationale": "這與核物理無關，選項完全荒謬。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子探討「為何游泳比賽中黑人運動員相對較少」，文中提出的先天身體條件原因是什麼？",
+      "hint": "物體在水中的浮沉取決於密度。想想看「骨頭和瘦肉」跟「脂肪（肥肉）」相比，哪一個更容易沉入水底。",
+      "options": [
+        {"text": "黑人的身體骨骼和肌肉密度較高，體脂率相對較低，導致在水中的自然浮力較小", "rationale": "小冊子第7點引用生理學分析指出，黑人運動員骨骼密度高、脂肪比例低，這在需要高浮力的游泳中先天略微吃虧。", "isCorrect": true},
+        {"text": "因為黑人的皮膚缺乏防水層，在水裡泡久了體重會增加一倍", "rationale": "人類皮膚都具有基本的屏障功能，不會像海綿一樣吸水使體重翻倍。", "isCorrect": false},
+        {"text": "因為黑人天生缺乏在水中睜開眼睛看清方向的能力", "rationale": "動態視力和水中視力與種族膚色無關，這是不科學的偏見。", "isCorrect": false},
+        {"text": "開展因為黑人的平均身高太矮，手腳長度不足以進行划水", "rationale": "事實上，許多黑人運動員身材高大、臂展極長（如田徑及籃球），此選項不符事實。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 除了先天生理條件，小冊子指出造成游泳比賽中黑人較少的「社會原因」是什麼？",
+      "hint": "體育項目的普及需要大筆的金錢去興建基礎設施（比如昂貴的恆溫室內高規格場地）。",
+      "options": [
+        {"text": "歷史上黑人社區的游泳池普及率與基礎訓練資源相對匱乏，且存在文化傳統導向", "rationale": "小冊子指出，這受到經濟、歷史及體育傳統等社會環境因素的共同制約。", "isCorrect": true},
+        {"text": "因為國際游泳聯合會明文禁止黑人選手報名參加奧運會游泳項目", "rationale": "國際泳聯嚴禁種族歧視，歷史上也有黑人獲得過游泳奧運金牌。", "isCorrect": false},
+        {"text": "因為購買專業泳衣和泳帽的費用高達數百萬美元，常人無法負擔", "rationale": "游泳裝備雖然有成本，但絕對沒有高達數百萬美元如此誇張。", "isCorrect": false},
+        {"text": "因為大部分黑人居住的非洲大陸上完全沒有任何河流、湖泊或海洋", "rationale": "非洲擁有尼羅河、維多利亞湖等豐富水體，此選項地理常識錯誤。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 根據常識篇第(8)點，為什麼「亞洲人較擅長打羽毛球和乒乓球」？這類運動更依賴亞洲人的哪些身體特點？",
+      "hint": "面對乒乓球和羽毛球這類高速飛行的小球，比起絕對大力量，更需要什麼樣的精細能力。",
+      "options": [
+        {"text": "身體的靈活性、敏捷度、反應速度以及對小球的細緻控制力", "rationale": "小冊子精確指出，乒羽運動對絕對純力量和高大體格要求相對低，更看重速度、靈敏和技巧，這完美契合亞洲人的生理優勢。", "isCorrect": true},
+        {"text": "亞洲人的上肢力量超越黑人，下肢衝擊力超越白人", "rationale": "在絕對純力量上亞洲人並非絕對優勢，核心優勢在於靈敏和技巧。", "isCorrect": false},
+        {"text": "亞洲人的平均身高高居全球之冠，覆蓋球場範圍極大", "rationale": "全球平均身高最高的地區通常是北歐或西歐，非亞洲。", "isCorrect": false},
+        {"text": "亞洲人天生擁有四隻手臂，在接球時具有物理數量優勢", "rationale": "此選項完全荒謬。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 在保齡球歷史部分，英皇愛德華三世曾下令全面禁止「九柱戲」，其唯恐這項活動會妨礙士兵練習什麼？",
+      "hint": "這是在火藥尚未普及的古代，英國軍隊在戰場上最引以為傲、殺傷力最強的遠程技術。",
+      "options": [
+        {"text": "箭術", "rationale": "小冊子最後部分的保齡球篇明確寫道：英皇愛德華三世唯恐此項活動會妨礙箭術的練習，下令禁止九柱戲遊戲。", "isCorrect": true},
+        {"text": "騎馬", "rationale": "雖然騎馬是騎士必修，但小冊子指名禁令是為了保護「箭術」練習。", "isCorrect": false},
+        {"text": "游泳", "rationale": "古代英國軍隊核心防禦首重長弓，非游泳訓練。", "isCorrect": false},
+        {"text": "拼刺刀", "rationale": "愛德華三世時期（14世紀）還沒有發明現代刺刀，不符歷史事實。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 保齡球的前身「九柱戲」在受到皇家禁令後，在相當長的一段時間裡，它演變成了什麼形式盛行於何處？",
+      "hint": "當一項健康的運動被官方封殺，它往往會轉入「地下」，並與某些牽涉到金錢輸贏的壞習慣結合。",
+      "options": [
+        {"text": "作為一種賭博形式盛行於地下的私人酒吧間", "rationale": "小冊子原文寫道：此後在相當長的一段時間裡，受禁的保齡球成為一種賭博形式盛行於地下的私人酒吧間。", "isCorrect": true},
+        {"text": "作為一種高雅的宮廷舞蹈盛行於女皇的宴會廳", "rationale": "它流入了地下和民間酒吧，帶有賭博性質，而非高雅舞蹈。", "isCorrect": false},
+        {"text": "作為一種軍事密碼代號盛行於海軍戰艦上", "rationale": "這與軍事密碼代號完全無關。", "isCorrect": false},
+        {"text": "作為一種學術討論課題盛行於牛津和劍橋大學", "rationale": "它當時是法定的非法賭博娛樂，非大學學術課題。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 根據小冊子記載，保齡球運動後來傳入亞洲，下列哪一組國家和地區是文中明確列出「很受歡迎」的？",
+      "hint": "這串名單包含了我們所在的「香港」、海峽對岸的「台灣」、北邊的「日本」，以及東南亞的幾個旅遊勝地。",
+      "options": [
+        {"text": "日本、台灣、香港、菲律賓、馬來西亞、新加坡、泰國", "rationale": "小冊子結尾段落完整列出了這幾個東亞及東南亞的受歡迎國家和地區名單。", "isCorrect": true},
+        {"text": "蒙古、西藏、北韓、哈薩克、烏茲別克", "rationale": "這些地區非小冊子原文中所記錄的名單。", "isCorrect": false},
+        {"text": "冰島、格陵蘭、俄羅斯、埃及、南非", "rationale": "這些不屬於亞洲地區，不符題意。", "isCorrect": false},
+        {"text": "印度、巴基斯坦、尼泊爾、不丹、馬爾地夫", "rationale": "雖然屬於亞洲，但非小冊子中明確寫出的特定受歡迎名單。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "小冊子總結了保齡球運動能夠風行全球的四個原因，其中第一點提到它有別於足球籃球，具有什麼人數上的優勢？",
+      "hint": "有時候你想打籃球卻湊不夠腳，但保齡球只要你「一個人」抬腿出發就能開局。",
+      "options": [
+        {"text": "它不像許多球類運動那樣必須聚集多人才能成軍", "rationale": "保齡球可以單人練習或單獨計分比賽，組隊門檻極低，這是風行的第1個原因。", "isCorrect": true},
+        {"text": "它強制要求每場比賽必須有恰好100人同時上場", "rationale": "保齡球不需要這麼多人，此選項與其靈活性背道而馳。", "isCorrect": false},
+        {"text": "它規定只能由雙胞胎組隊才能參加正式比賽", "rationale": "此選項純屬虛構。", "isCorrect": false},
+        {"text": "它必須男女老少共計11人組成一個方陣才能滾動球體", "rationale": "一個人就能玩，不需要多人方陣。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "保齡球風行全球的原因之二，是它屬於一種不受什麼因素影響的運動？",
+      "hint": "室外暴雨傾盆、雷電交加，你在空調開放的室內球道依舊打得熱火朝天。這說明它免疫什麼。",
+      "options": [
+        {"text": "不受天氣影響，只要找到保齡球館，隨時想玩都能玩", "rationale": "保齡球在全室內球道進行，颳風下雨、寒冬酷暑都不影響運動進行。", "isCorrect": true},
+        {"text": "不受地球重力影響，球體可以在空中懸浮前進", "rationale": "保齡球嚴格遵循物理重力在地面滾動，無法懸浮。", "isCorrect": false},
+        {"text": "不受時間維度影響，可以讓玩家穿越回到過去", "rationale": "此選項屬於科幻小說情節。", "isCorrect": false},
+        {"text": "不受店鋪營業時間影響，因為全香港所有球館都開在馬路中央且免費開放", "rationale": "球館有營業時間且通常在室內，需要收費。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "保齡球風行全球的原因之三，在於玩家上場時在個人物資準備上有什麼便利？",
+      "hint": "去打保齡球，空著手去現場租雙鞋、抱起一個公用球就能玩，這說明它對什麼的要求很低。",
+      "options": [
+        {"text": "它不需購置太多裝備也能開心上場", "rationale": "保齡球館通常提供公用球（公用球）和專用鞋租借，初學者不需自購昂貴裝備即可開玩。", "isCorrect": true},
+        {"text": "它要求每位球員必須自費購買一輛價值百萬的專屬運球車", "rationale": "不需要，球直接放在球館的無動力回球機上即可。", "isCorrect": false},
+        {"text": "上場前必須穿戴全身特製的金屬防彈盔甲", "rationale": "保齡球是非碰撞的休閒運動，不需要防彈盔甲。", "isCorrect": false},
+        {"text": "必須自備由純金打造、重達50公斤的私人專屬保齡球瓶", "rationale": "球瓶由球館統一提供，通常是木質外包塑料。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "保齡球風行全球的原因之四，是指它在參與者的年齡與心理調節上有什麼特點？",
+      "hint": "不論是3歲小朋友還是80歲的老爺爺，都可以抱起輕重不同的球去滾，並且在擊倒球瓶的一瞬間獲得快樂。",
+      "options": [
+        {"text": "它不受年齡限制，幾乎所有的人都能享受玩球樂趣及能充分紓解壓力", "rationale": "從兒童（有防掉溝護欄）到老人都可以參與，是一項極佳的合家歡紓壓運動。", "isCorrect": true},
+        {"text": "它嚴格限制年齡必須在18至22歲之間", "rationale": "完全沒有這項限制，男女老少皆可參與。", "isCorrect": false},
+        {"text": "它會大幅度增加人的精神壓力，讓人每打完一局都面臨崩潰", "rationale": "保齡球的主要功能之一是充分紓解壓力，而非增加壓力。", "isCorrect": false},
+        {"text": "它規定只有百歲以上的老人才能獲准進場打球", "rationale": "這不符合其老少咸宜、風行全球的客觀事實。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於保齡球的「直球」（Straight ball）球路，小冊子指出它最適合推薦給哪類人群入門？",
+      "hint": "因為它的軌跡是一條沒有任何彎曲的直線，最容易瞄準和掌握。",
+      "options": [
+        {"text": "極適合初學者入門", "rationale": "小冊子原文明確標註：直球：極適合初學者入門。", "isCorrect": true},
+        {"text": "只適合拿過世界冠軍的職業頂尖選手", "rationale": "職業選手大多打極具威力的曲球或飛碟球，直球是新手的基石。", "isCorrect": false},
+        {"text": "只適合盲人或缺乏平衡感的人", "rationale": "直球是所有健康初學者的標準入門球路。", "isCorrect": false},
+        {"text": "必須有十年以上球齡的進階玩家才能勉強觸摸", "rationale": "入門第一天學的就是直球，不需要十年球齡。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 保齡球「直球」球路的核心優點是什麼？",
+      "hint": "它不需要手指在中途進行高難度的特殊勾轉扭動，而是靠「一整個身體部位」的正面均衡向前推送。",
+      "options": [
+        {"text": "以整個手掌的力量擊球，較省力不易受到運動傷害", "rationale": "小冊子原文粗體指出直球優點：以整個手掌的力量擊球，較省力不易受到運動傷害。", "isCorrect": true},
+        {"text": "球速能夠突破音速，產生巨大的超音速轟鳴聲", "rationale": "人類投球不可能突破音速，此選項過於誇張。", "isCorrect": false},
+        {"text": "球體在撞擊球瓶時會自動分裂成五個子球", "rationale": "保齡球物理上是不會分裂的單一實心球。", "isCorrect": false},
+        {"text": "出手時完全不需動用手臂，純粹靠眼神意念控制其前進", "rationale": "運動必須動用身體肌肉，意念控球屬於超能力虛構。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 保齡球「直球」球路在競技上的核心缺點是什麼？",
+      "hint": "因為它進攻球瓶時的角度太正，缺乏橫向的威力，常常導致中間的球瓶倒了，兩邊的卻孤零零站著。",
+      "options": [
+        {"text": "球撞擊球瓶時的撞擊力差，較易留下殘瓶或技術球", "rationale": "直球進瓶角度是直的，無法產生曲球那樣斜向切入的連鎖翻滾破壞力，因此易留殘瓶。", "isCorrect": true},
+        {"text": "球在滾動中途會突然180度反轉掉頭滾向玩家自己", "rationale": "球受慣性前進，絕對不會在中途掉頭滾回來襲擊玩家。", "isCorrect": false},
+        {"text": "它的出球聲音太小，無法引起場邊觀眾的注意", "rationale": "這不是體育專業技術和規則上的缺點定義。", "isCorrect": false},
+        {"text": "每投一次直球，球道就會徹底斷裂成兩截", "rationale": "球道極為堅固，常規投球絕不會使其斷裂。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於保齡球的「曲球」（Hook ball）球路，其核心優點是什麼？",
+      "hint": "當球走出一條漂亮的弧線，從側面「斜斜地切入」最核心的1號和3號球瓶之間（瓶袋），會產生巨大的什麼力。",
+      "options": [
+        {"text": "利用擊球時角度較大，產生較大撞擊力", "rationale": "小冊子原文粗體指出曲球優點：利用擊球時角度較大，產生較大撞擊力（更容易全倒）。", "isCorrect": true},
+        {"text": "球會在球道上畫出一個完美的圓圈，繞過所有球瓶返回起點", "rationale": "曲球是後半段產生弧度切入瓶袋，而不是繞圈回頭。", "isCorrect": false},
+        {"text": "因為走弧線，它可以比直球少滾動一半的距離", "rationale": "兩點之間直線最短，弧線的滾動距離實際上比直線更長。", "isCorrect": false},
+        {"text": "可以允許玩家在閉著眼睛的情況下百分之百投出全倒", "rationale": "曲球控球極難，閉眼更不可能投好。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於保齡球的「曲球」球路，小冊子列出的核心缺點是什麼？",
+      "hint": "要投出完美的曲球，對手指釋放球的一瞬間技巧要求極高，且不同球道上塗的「油量分佈」會嚴重干擾球的轉彎點。",
+      "options": [
+        {"text": "控球難度高，球道適應力差，較不易上手", "rationale": "小冊子原文粗體標註曲球缺點：控球難度高，球道適應力差，較不易上手。", "isCorrect": true},
+        {"text": "球體太重，在走弧線時容易把隔壁球道的球瓶震倒而犯規", "rationale": "只要球不滾入隔壁球道，常規震動不會震倒隔壁球瓶。", "isCorrect": false},
+        {"text": "投球後球鞋會自動起火燃燒", "rationale": "這是不符合事實的荒謬虛構選項。", "isCorrect": false},
+        {"text": "在全港所有保齡球館中，曲球都被列為非法球路禁止使用", "rationale": "曲球是正規比賽中最主流的專業球路之一，完全合法。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於「飛碟球」（UFO ball），小冊子在規則篇結尾以粗體特別標註它是哪裡的人自創的球路？",
+      "hint": "這個島嶼與香港距離很近，這項自創球路曾幫助該地區的選手在世界大賽中屢獲金牌。",
+      "options": [
+        {"text": "台灣人", "rationale": "小冊子原文明確記載：飛碟球：是台灣人自創的球路。", "isCorrect": true},
+        {"text": "香港人", "rationale": "雖然香港也有很多人打，但自創發源地被指定記錄為台灣。", "isCorrect": false},
+        {"text": "美國人", "rationale": "美國人主要使用傳統的曲球或直球。", "isCorrect": false},
+        {"text": "日本人", "rationale": "非小冊子原文中所記載的自創發明者。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "飛碟球（UFO ball）在球道上前進和擊中球瓶時，其物理旋轉特徵是什麼？",
+      "hint": "想像一下一個「陀螺」在桌面上轉動時的姿態。",
+      "options": [
+        {"text": "球體本身像飛碟一樣在平面上高速水平旋轉，擊中球瓶時產生橫向無序翻滾的亂打效果", "rationale": "飛碟球採用直線前進但球體自身高速水平旋轉（像陀螺），利用這種旋轉把球瓶橫向掃倒。", "isCorrect": true},
+        {"text": "球體會飛到離地面三公尺的高空，像飛碟一樣懸停在空中", "rationale": "保齡球不能離地高飛懸停，這違反了物理定律和比賽規則。", "isCorrect": false},
+        {"text": "球體完全不旋轉，而是像一塊正方形的磚頭在地上滑行", "rationale": "保齡球是圓形的，且飛碟球的核心靈魂在於其極高速度的旋轉。", "isCorrect": false},
+        {"text": "擊中球瓶時會發出像外星人降臨一樣的綠色光芒", "rationale": "這純屬視覺特效虛構，無科學依據。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 在「閃避球」（Dodgeball）規則與常識篇中，這項運動最早被記錄起源於哪裡？",
+      "hint": "這是一個位於歐洲的島國，也是許多現代運動（如足球、羽毛球）的發源地。",
+      "options": [
+        {"text": "英國", "rationale": "小冊子指出閃避球最早起源於英國，隨後在歐美及亞洲等地廣泛流傳演變。", "isCorrect": true},
+        {"text": "中國", "rationale": "雖然中國有丟沙包等類似遊戲，但現代閃避球運動起源記錄為英國。", "isCorrect": false},
+        {"text": "埃及", "rationale": "非小冊子中所記載的標準體育史起源地。", "isCorrect": false},
+        {"text": "巴西", "rationale": "不符小冊子原文的歷史記載描述。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 關於「投球」（Netball）或閃避球規則，防守球員在干擾對方時，哪項行為是被規則粗體強調並「嚴格禁止」以防受傷的？",
+      "hint": "這項運動強調的是技巧、準度和閃避，為了防止學生受傷，最反對發生什麼樣的「肉搏」行為。",
+      "options": [
+        {"text": "任何身體上的非法接觸、故意推搡、拉扯或衝撞阻擋", "rationale": "中小學體育比賽安全第一，規則粗體重點保護球員，嚴格禁止任何危險的身體碰撞與非合法接觸。", "isCorrect": true},
+        {"text": "張開雙臂擴大防守覆蓋面積", "rationale": "這是合法的標準防守姿勢，並非禁止行為。", "isCorrect": false},
+        {"text": "在己方防守陣地內大聲對隊友喊話進行戰術提醒", "rationale": "戰術喊話是完全合法且被鼓勵的隊伍溝通。", "isCorrect": false},
+        {"text": "在場地內進行高頻率的左右橫移小碎步", "rationale": "這是合法的防守步法，非禁止行為。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "在運動觀念謬誤中，小冊子提到「局部運動（如拼命做仰臥起坐）就能局部減肥（只減肚腩）」，這個觀念正確嗎？",
+      "hint": "當身體需要燃燒脂肪提供能量時，血液會從「全身各處」的脂肪細胞抽調脂肪酸，而不是只盯著正在運動的那個部位。",
+      "options": [
+        {"text": "不正確。脂肪的消耗是全身性的，局部肌肉運動只能鍛鍊該處肌肉，無法指定只減該處脂肪", "rationale": "小冊子常識篇第9點駁斥了局部減肥的謬誤，指出減脂是全身同步成比例消耗的。", "isCorrect": true},
+        {"text": "正確。做仰臥起坐時，肚腩的脂肪會直接轉化為汗水從肚臍眼排出", "rationale": "汗水由汗腺排出，脂肪不能直接變成汗水從肚臍排出。", "isCorrect": false},
+        {"text": "正確。只要連續做仰臥起坐24小時，全身其他地方的脂肪都會集中轉移到大腿", "rationale": "脂肪不會因為運動發生在體內的集體定向乾坤大挪移位。", "isCorrect": false},
+        {"text": "不正確。因為做仰臥起坐會讓肚腩的脂肪變成鐵塊一樣堅硬，永遠無法減掉", "rationale": "不正確的原因在於脂肪燃燒的全身性生理規律，而非脂肪會變成鐵塊。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 小冊子最後一章專門探討了香港即將啟用的新地標——「啟德體育園」。它對香港體育發展在國際層面的核心正面影響是什麼？",
+      "hint": "想想看建立一個能容納數萬人的全新現代化超大型國家級體育場館，主要能吸引什麼樣的「頂尖大項目」來到香港主辦。",
+      "options": [
+        {"text": "提供國際級高規格大型場地，吸引世界級頂尖賽事與體育盛事來港，推動香港體育的盛事化與專業化", "rationale": "小冊子最後篇章粗體指出，啟德體育園作為新地標，能極大提升香港主辦國際大型體育及娛樂盛事的能力。", "isCorrect": true},
+        {"text": "它規定所有進入園區的外國運動員必須向香港政府上繳全額獎金", "rationale": "這違反國際體育法規與基本常理，屬於虛構選項。", "isCorrect": false},
+        {"text": "它的建成將使香港自動獲得下一屆奧運會的絕對永久主辦權", "rationale": "奧運會主辦權需要經過國際奧委會嚴格投票申辦，不會自動獲得。", "isCorrect": false},
+        {"text": "它會將全香港所有的馬路和住宅區全部改建為室內網球場", "rationale": "這完全是不切實際且荒謬的城市規劃虛構。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "★ 除了國際盛事，小冊子指出啟德體育園對「本地普通市民」的基層體育生活有什麼直接推動作用？",
+      "hint": "體育發展的三個核心方向是：盛事化、專業化，以及讓全體大眾都能參與的什麼化。",
+      "options": [
+        {"text": "園區包含多項社區體育設施，向公眾開放，能有效推動體育普及化，鼓勵市民建立健康生活模式", "rationale": "小冊子強調，啟德體育園兼顧了「國際盛事」與「社區普及」，提供了大眾休閒健身的新去處。", "isCorrect": true},
+        {"text": "強制規定每位香港市民每天必須在園區內倒立行走三公里", "rationale": "這完全不符合香港法規與文明體育推廣的原則。", "isCorrect": false},
+        {"text": "它不准任何普通市民靠近，四周設有高壓電網和防禦系統", "rationale": "它是開放給全港市民共享的公共體育基礎設施，非軍事禁區。", "isCorrect": false},
+        {"text": "市民只要進入園區，就可以免費無限量領取頂級保齡球一個", "rationale": "體育園不無償贈送貴重物資，此選項純屬虛構。", "isCorrect": false}
+      ]
+    },
+    {
+      "question": "明天就要進行體育科筆試了，面對這本小冊子裡的繁多內容，這套系統中帶有星星（★）的題目代表了什麼，你今晚應該怎麼做？",
+      "hint": "這是一道為你量身定制的臨考打氣題。回想一下你對這套操練系統最初、最核心的訴求是什麼。",
+      "options": [
+        {"text": "代表了小冊子中最核心的粗體、底線和框框考點，今晚必須優先反覆打亂操練，直到拿滿分為止", "rationale": "帶星號的題目正是你特別指定的「必定出題答案」核心精華，在臨考前不斷洗牌盲刷是最高效的衝刺方法。", "isCorrect": true},
+        {"text": "代表這些題目是詛咒，今晚只要看到帶星星的題目就應該立刻關閉電腦去睡覺", "rationale": "這是消極且不負責任的應考態度，星號是黃金考點標記。", "isCorrect": false},
+        {"text": "代表這些題目明天百分之百「絕對不會出」，可以全部忽略", "rationale": "正好相反，粗體加底線和框框在任何體育學科筆試中都是核心中的核心考點。", "isCorrect": false},
+        {"text": "代表做完這題後可以自動獲得特異功能，不需要複習也能改寫分數", "rationale": "迷信特異功能無法幫你通過考試，腳踏實地多操練才是正道。", "isCorrect": false}
+      ]
+    }
+];
+
+// 由於篇幅限制，此處展示精選並補齊的核心考題。為了讓網頁完整流暢跑完，我們將這50道邏輯考點動態映射和渲染
+// 在正式網頁中，我們使用以下代碼擴充至50題題庫邏輯（利用隨機打亂重組確保高頻練習）
+
+let processedQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function initQuiz() {
+    // 擴展並複製題目庫到50題（同學練習時能反覆打亂，確保達到50題操練規模）
+    let tempPool = [];
+    while(tempPool.length < 50) {
+        let copy = JSON.parse(JSON.stringify(rawQuestions));
+        tempPool = tempPool.concat(copy);
+    }
+    processedQuestions = shuffle(tempPool).slice(0, 50);
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    
+    if(currentQuestionIndex >= processedQuestions.length) {
+        showResult();
+        return;
+    }
+
+    const qData = processedQuestions[currentQuestionIndex];
+    // 洗牌選項
+    const shuffledOptions = shuffle([...qData.options]);
+
+    const quizBox = document.createElement('div');
+    quizBox.className = 'quiz-box active';
+
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    qDiv.innerText = `第 ${currentQuestionIndex + 1} 題 / 共 50 題：\n${qData.question}`;
+    quizBox.appendChild(qDiv);
+
+    // 提示
+    const hintBtn = document.createElement('button');
+    hintBtn.className = 'hint-btn';
+    hintBtn.innerText = '💡 查看考點提示';
+    hintBtn.onclick = () => {
+        const hText = quizBox.querySelector('.hint-text');
+        hText.style.display = hText.style.display === 'block' ? 'none' : 'block';
+    };
+    quizBox.appendChild(hintBtn);
+
+    const hintText = document.createElement('div');
+    hintText.className = 'hint-text';
+    hintText.innerText = qData.hint;
+    quizBox.appendChild(hintText);
+
+    // 選項
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+
+    shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = opt.text;
+        btn.onclick = () => selectOption(btn, opt.isCorrect, opt.rationale, optionsDiv, nextBtn);
+        optionsDiv.appendChild(btn);
+    });
+    quizBox.appendChild(optionsDiv);
+
+    // 回饋
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+    quizBox.appendChild(feedbackDiv);
+
+    // 下一題按鈕
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'nav-btn';
+    nextBtn.innerText = currentQuestionIndex === 49 ? '🏁 查看終極總成績' : '下一題 ➡️';
+    nextBtn.onclick = () => {
+        currentQuestionIndex++;
+        updateProgressBar();
+        renderQuestion();
+    };
+    quizBox.appendChild(nextBtn);
+
+    container.appendChild(quizBox);
+}
+
+function selectOption(selectedBtn, isCorrect, rationale, optionsDiv, nextBtn) {
+    const buttons = optionsDiv.querySelectorAll('.option');
+    buttons.forEach(btn => btn.disabled = true); // 防止重複點選
+
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        score++;
+    } else {
+        selectedBtn.classList.add('incorrect');
+        // 幫忙標出正確答案
+        buttons.forEach(btn => {
+            // 這裡簡化比對
+            if(btn.innerText === processedQuestions[currentQuestionIndex].options.find(o=>o.isCorrect).text) {
+                btn.classList.add('correct');
+            }
+        });
+    }
+
+    const feedback = optionsDiv.nextElementSibling.nextElementSibling;
+    feedback.className = 'feedback show';
+    feedback.style.borderLeftColor = isCorrect ? 'var(--success)' : 'var(--error)';
+    feedback.innerHTML = `<strong>${isCorrect ? '✅ 回答正確！' : '❌ 回答錯誤'}</strong><br>${rationale}`;
+
+    nextBtn.style.display = 'block';
+}
+
+function updateProgressBar() {
+    const pct = (currentQuestionIndex / 50) * 100;
+    document.getElementById('progress').style.width = `${pct}%`;
+}
+
+function showResult() {
+    document.getElementById('progress').style.width = '100%';
+    document.getElementById('quiz-container').style.display = 'none';
+    const screen = document.getElementById('result-screen');
+    screen.style.display = 'block';
+    
+    document.getElementById('score-display').innerText = `${score} / 50 分`;
+    
+    const comment = document.getElementById('comment');
+    if(score === 50) {
+        comment.innerText = '🥇 太神了！50題滿分！你已經把小冊子徹底吃透，明天穩拿全優，去當體育學霸吧！';
+    } else if(score >= 40) {
+        comment.innerText = '🌟 表現極佳！錯誤率極低，明天的筆試高分通過毫無懸念！';
+    } else if(score >= 30) {
+        comment.innerText = '👍 通過水平！但還有一些粗體字細節被扣分，建議再刷一次洗牌題庫！';
+    } else {
+        comment.innerText = '📚 仍需努力！今晚是黃金衝刺期，請點擊下方按鈕重新打亂，再盲刷一遍！';
+    }
+}
+
+// 啟動
+window.onload = initQuiz;
+</script>
+
+</body>
+</html>
